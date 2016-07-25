@@ -160,42 +160,19 @@ sub getMasterInfo()
 
 #na koi full dump struc+data
 %tables = (
-    config =>  '100000000',
-    users =>  '100000000',
-    users_groups =>  '100000000',
-    users2groups =>  '100000000',
-    users_files =>  '100000000',
-    storages =>  '100000000',
-    materials =>  '100000000',
-    customers => '100000000',
-    tags => '100000000',
-    logs => '100000000',
-    rcptemplates => '100000000',
-    rcps => '100000000',
-    products => '100000000',
-    places => '100000000',
-    acl => '100000000',
-    orders => '100000000',
-    orders_properties => '100000000',
-    orders_files => '100000000',
-    orders_files_meta => '100000000',
-    visitors => '100000000',
-    visitors_files => '100000000',
-    visitors_files_meta => '100000000',
-    events => '100000000',
-    cards => '100000000',	
-    materials_properties => '100000000',
-    status => '100000000',
-    orders => '100000000',
-    orders_properties => '100000000',
-    scanners => '100000000',
-    scan_profiles => '100000000',
-    reco_templates => '100000000',
+    config =>  '100',
+    users =>  '100',
 );
 
 %tables = getTables();
 
 #print "Skipping tables $skipTables{'images_files2'}\n";
+
+print "Dumping database creation\n";
+open(FILE,">pre.sql");
+print FILE "DROP DATABASE IF EXISTS ".$dbname.";\n"; 
+print FILE "CREATE DATABASE ".$dbname." DEFAULT CHARACTER SET=utf8 DEFAULT COLLATE=utf8_general_ci;\n"; 
+close FILE;
 
 print "Dumping master info\n";
 open(FILE,">master_info.sql");
