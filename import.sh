@@ -14,7 +14,17 @@ do
 done
 }
 
-e "pre.sql"
+
+function epre {
+
+for cfile in $1
+do
+    echo "Importing $cfile"
+    cat $cfile | mysql -h$HOST -u$USER -p$PASS
+done
+}
+
+epre "pre.sql"
 e "struc_*sql"
 e "func_*sql"
 e "proc_*sql"

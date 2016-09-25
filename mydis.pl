@@ -176,8 +176,18 @@ close FILE;
 
 print "Dumping master info\n";
 open(FILE,">master_info.sql");
-print FILE getMasterInfo();
-print FILE getGtidPos(getMasterInfo());
+my @mi = getMasterInfo();
+print FILE <<__EOI__;
+CHANGE MASTER TO
+MASTER_HOST='$dbhost',
+MASTER_USER='repl',
+MASTER_PASSWORD='$dbpass',
+MASTER_PORT=3306,
+MASTER_LOG_FILE='$mi[0]',
+MASTER_LOG_POS=$mi[1],
+MASTER_CONNECT_RETRY=10;
+__EOI__
+#print FILE getGtidPos(getMasterInfo());
 close FILE;
 
 %users = getUsers();
@@ -230,7 +240,7 @@ close FILE;
 	#da exportvame data do reasonable limit
 	printf("Dumping data for table $ref->{'TABLE_NAME'}\n");
 	system("rm -f data_*".$ref->{'TABLE_NAME'}.".sql");
-        system("mysqldump -h$dbhost --where='1 LIMIT $tables{$ref->{'TABLE_NAME'}}' -t --skip-dump-date --skip-quick --complete-insert --extended-insert --insert-ignore --triggers=FALSE -u$dbuser -p$dbpass $dbname $ref->{'TABLE_NAME'} > data_$ref->{'TABLE_NAME'}.sql");
+        system("mysqldump -h$dbhost --where='1 LIMIT $tables{$ref->{'TABLE_NAME'}}' -t --single-transaction --skip-dump-date --skip-quick --complete-insert --extended-insert --insert-ignore --triggers=FALSE -u$dbuser -p$dbpass $dbname $ref->{'TABLE_NAME'} > data_$ref->{'TABLE_NAME'}.sql");
         }
         
         system("rm -f triggers_".$ref->{'TABLE_NAME'}.".sql");
