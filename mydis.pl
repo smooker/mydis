@@ -285,7 +285,7 @@ close FILE;
     while (my $ref = $sth->fetchrow_hashref()) {
         printf("Export of EVENT ".$ref->{'EVENT_NAME'}."\n");
         open(FILE,">event_".$ref->{'EVENT_NAME'}.".sql");
-        my $sth1 = $dbh->prepare("SHOW CREATE EVENT $ref->{'EVENT_NAME'}");
+        my $sth1 = $dbh->prepare("SHOW CREATE EVENT \`$ref->{'EVENT_NAME'}\`");
         $sth1->execute();
         my $ref1 = $sth1->fetchrow_hashref();
         print FILE "DROP EVENT IF EXISTS $ref->{'EVENT_NAME'};\n";
@@ -299,7 +299,7 @@ close FILE;
     #export na FUNCTIONS
 
     $sth = $sth = $dbh->prepare("SELECT SPECIFIC_NAME FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA='$dbname' AND ROUTINE_TYPE='FUNCTION'");
-        $sth->execute();
+    $sth->execute();
     
     while (my $ref = $sth->fetchrow_hashref()) {
         printf("Export of FUNCTION ".$ref->{'SPECIFIC_NAME'}."\n");
@@ -318,7 +318,7 @@ close FILE;
     #export na PROCEDURES
 
     $sth = $sth = $dbh->prepare("SELECT SPECIFIC_NAME FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA='$dbname' AND ROUTINE_TYPE='PROCEDURE'");
-        $sth->execute();
+    $sth->execute();
     
     while (my $ref = $sth->fetchrow_hashref()) {
         printf("Export of PROCEDURE ".$ref->{'SPECIFIC_NAME'}."\n");
