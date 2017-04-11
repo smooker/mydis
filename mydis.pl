@@ -39,7 +39,7 @@ sub getTables()
     $sth->execute();
     
     while (my $ref = $sth->fetchrow_hashref()) {
-        $tables{$ref->{'TABLE_NAME'}} = 1000;
+        $tables{$ref->{'TABLE_NAME'}} = 100000000;
     }
     return %tables;
 }

@@ -1,16 +1,16 @@
 #!/bin/bash
 
 USER=root
-PASS=
+PASS=motorola
 HOST=127.0.0.1
-DBNAME=
+DBNAME=exscan_maturi
 
 function e {
 
 for cfile in $1
 do
 	echo "Importing $cfile"
-	cat $cfile | mysql -h$HOST -u$USER -p$PASS $DBNAME 
+	cat $cfile | sed -e "s/DEFINER=\`he\`@\`localhost\`/DEFINER=\`root\`@\`localhost\`/" | mysql -h$HOST -u$USER -p$PASS -c $DBNAME 
 done
 }
 
@@ -20,7 +20,7 @@ function epre {
 for cfile in $1
 do
     echo "Importing $cfile"
-    cat $cfile | mysql -h$HOST -u$USER -p$PASS
+    cat $cfile | sed -e "s/DEFINER=\`he\`@\`localhost\`/DEFINER=\`root\`@\`localhost\`/" | mysql -v -h$HOST -u$USER -c -p$PASS
 done
 }
 
