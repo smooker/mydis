@@ -1,9 +1,9 @@
 #!/bin/bash
 
 USER=root
-PASS=motorola
+PASS=
 HOST=127.0.0.1
-DBNAME=exscan_maturi
+DBNAME=
 
 function e {
 
