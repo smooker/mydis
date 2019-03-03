@@ -3,6 +3,15 @@ use DBD::mysql;
 use Getopt::Long;
 use strict;
 use warnings;
+use Pod::Usage;
+
+my $man = 0;
+my $help = 0;
+
+#GetOptions('help|?' => \$help, man => \$man) or pod2usage(2);
+
+#pod2usage(1) if $help;
+#pod2usage(-exitval => 0, -verbose => 2) if $man;
 
 GetOptions(
     "skip=s" => \my @skiptables,
@@ -39,7 +48,7 @@ sub getTables()
     $sth->execute();
     
     while (my $ref = $sth->fetchrow_hashref()) {
-        $tables{$ref->{'TABLE_NAME'}} = 100000000;
+        $tables{$ref->{'TABLE_NAME'}} = 1000000000;
     }
     return %tables;
 }
@@ -239,7 +248,7 @@ close FILE;
         {
 	#da exportvame data do reasonable limit
 	printf("Dumping data for table $ref->{'TABLE_NAME'}\n");
-	system("rm -f data_*".$ref->{'TABLE_NAME'}.".sql");
+	system("rm -f data_".$ref->{'TABLE_NAME'}.".sql");
         system("mysqldump -h$dbhost --where='1 LIMIT $tables{$ref->{'TABLE_NAME'}}' -t --single-transaction --skip-dump-date --skip-quick --complete-insert --extended-insert --insert-ignore --triggers=FALSE -u$dbuser -p$dbpass $dbname $ref->{'TABLE_NAME'} > data_$ref->{'TABLE_NAME'}.sql");
         }
         
@@ -344,3 +353,23 @@ close FILE;
         close FILE;
     }
 
+__END__
+
+=head1 NAME
+sample - Using Getopt::Long and Pod::Usage
+=head1 SYNOPSIS
+sample [options] [file ...]
+ Options:
+   -help            brief help message
+   -man             full documentation
+=head1 OPTIONS
+=over 8
+=item B<-help>
+Print a brief help message and exits.
+=item B<-man>
+Prints the manual page and exits.
+=back
+=head1 DESCRIPTION
+B<This program> will read the given input file(s) and do something
+useful with the contents thereof.
+=cut
