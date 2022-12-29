@@ -1,9 +1,9 @@
 #!/bin/bash
 
 USER=root
-PASS=
+PASS=sm00th3r
 HOST=127.0.0.1
-DBNAME=
+DBNAME=holo
 
 function e {
 

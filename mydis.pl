@@ -4,6 +4,16 @@ use Getopt::Long;
 use strict;
 use warnings;
 use Pod::Usage;
+use Term::ReadKey;
+
+#no warnings 'uninitialized';
+
+print "Type your password:";
+ReadMode('noecho'); # don't echo
+
+my $dbpass=<STDIN>;
+ReadMode(0);        # back to normal
+chomp $dbpass;
 
 my $man = 0;
 my $help = 0;
@@ -18,7 +28,6 @@ GetOptions(
     "host=s" => \my $dbhost,
     "name=s" => \my $dbname,
     "user=s" => \my $dbuser,
-    "pass=s" => \my $dbpass,
 );
 
 my %skipTables = map { $_ => 1 } @skiptables;
@@ -48,7 +57,7 @@ sub getTables()
     $sth->execute();
     
     while (my $ref = $sth->fetchrow_hashref()) {
-        $tables{$ref->{'TABLE_NAME'}} = 1000000000;
+        $tables{$ref->{'TABLE_NAME'}} = 100000000000; #only one
     }
     return %tables;
 }
@@ -169,8 +178,8 @@ sub getMasterInfo()
 
 #na koi full dump struc+data
 %tables = (
-    config =>  '100',
-    users =>  '100',
+#    config =>  '100',
+#    users =>  '100',
 );
 
 %tables = getTables();
@@ -248,10 +257,14 @@ close FILE;
         {
 	#da exportvame data do reasonable limit
 	printf("Dumping data for table $ref->{'TABLE_NAME'}\n");
-	system("rm -f data_".$ref->{'TABLE_NAME'}.".sql");
+#	system("rm -f data_".$ref->{'TABLE_NAME'}.".sql");
+				if (-e "data_$ref->{'TABLE_NAME'}.sql" ) {
+					  printf("ALREADY EXISTS!\n");
+			  } else {
         system("mysqldump -h$dbhost --where='1 LIMIT $tables{$ref->{'TABLE_NAME'}}' -t --single-transaction --skip-dump-date --skip-quick --complete-insert --extended-insert --insert-ignore --triggers=FALSE -u$dbuser -p$dbpass $dbname $ref->{'TABLE_NAME'} > data_$ref->{'TABLE_NAME'}.sql");
         }
-        
+        }
+
         system("rm -f triggers_".$ref->{'TABLE_NAME'}.".sql");
 
         #export na TRIGGERS
